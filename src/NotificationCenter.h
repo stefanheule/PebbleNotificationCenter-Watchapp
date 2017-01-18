@@ -13,6 +13,7 @@
 #ifdef PBL_PLATFORM_APLITE
     #define PBL_LOW_MEMORY
 #endif
+#define PBL_LOW_MEMORY
 
 extern uint8_t config_titleFont;
 extern uint8_t config_subtitleFont;
