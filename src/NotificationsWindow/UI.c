@@ -270,9 +270,9 @@ static void statusbarback_paint(Layer* layer, GContext* ctx)
 {
     GColor backgroundColor = GColorBlack;
 #ifdef PBL_COLOR
-    Notification* curNotification = nw_get_displayed_notification();
-    if (curNotification != NULL)
-        backgroundColor = curNotification->notificationColor;
+    // Notification* curNotification = nw_get_displayed_notification();
+    // if (curNotification != NULL)
+    //     backgroundColor = curNotification->notificationColor;
 #endif
 
     graphics_context_set_fill_color(ctx, backgroundColor);
@@ -292,12 +292,12 @@ static void circles_paint(Layer* layer, GContext* ctx)
     GColor backgroundColor = GColorBlack;
 
 #ifdef PBL_COLOR
-    Notification* curNotification = nw_get_displayed_notification();
-    if (curNotification != NULL)
-    {
-        backgroundColor = curNotification->notificationColor;
-        circlesColor = getTextColor(backgroundColor);
-    }
+    // Notification* curNotification = nw_get_displayed_notification();
+    // if (curNotification != NULL)
+    // {
+    //     backgroundColor = curNotification->notificationColor;
+    //     circlesColor = getTextColor(backgroundColor);
+    // }
 #endif
 
 
@@ -367,7 +367,8 @@ void nw_ui_load(Window* window)
 {
     busyIndicator = gbitmap_create_with_resource(RESOURCE_ID_INDICATOR_BUSY);
 
-    statusbarSize = PBL_IF_ROUND_ELSE(32, 16);
+#define BIG_STB_H 32
+    statusbarSize = PBL_IF_ROUND_ELSE(32, BIG_STB_H);
 
     Layer* topLayer = window_get_root_layer(window);
     GRect windowBounds = layer_get_frame(topLayer);
@@ -381,10 +382,10 @@ void nw_ui_load(Window* window)
     layer_set_update_proc(circlesLayer, circles_paint);
     layer_add_child(statusbar, circlesLayer);
 
-    statusClock = text_layer_create(PBL_IF_ROUND_ELSE(GRect(0, 0, windowBounds.size.w, 16), GRect(144 - 53, 0, 50, 16)));
+    statusClock = text_layer_create(PBL_IF_ROUND_ELSE(GRect(0, 0, windowBounds.size.w, BIG_STB_H), GRect(144 - 144, -12, 144, 100)));
     text_layer_set_background_color(statusClock, GColorClear);
     text_layer_set_text_color(statusClock, GColorWhite);
-    text_layer_set_font(statusClock, fonts_get_system_font(FONT_KEY_GOTHIC_14));
+    text_layer_set_font(statusClock, fonts_get_system_font(FONT_KEY_BITHAM_42_BOLD));
     text_layer_set_text_alignment(statusClock, PBL_IF_ROUND_ELSE(GTextAlignmentCenter, GTextAlignmentRight));
     layer_add_child(statusbar, (Layer*) statusClock);
 
