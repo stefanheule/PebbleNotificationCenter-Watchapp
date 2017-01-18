@@ -1,3 +1,6 @@
+Note: This is my personal fork, where I changed the clock size in the status bar to be much bigger.  I want my pebble to show the time even when it shows a notification, too.
+
+
 PebbleNotificationCenter-Watchapp
 =================================
 
