@@ -355,6 +355,13 @@ void nw_ui_update_statusbar_clock()
     char tmpClockText[9];
     strftime(tmpClockText, 9, formatString, lTime);
 
+    // remove leading zero
+    if (tmpClockText[0] == '0') {
+        for (int i = 0; i < 6; i++) {
+            tmpClockText[i] = tmpClockText[i+1];
+        }
+    }
+
     //Only update screen when actual clock changes
     if (strcmp(tmpClockText, clockText) != 0)
     {
