@@ -2,6 +2,7 @@
 #include <pebble_fonts.h>
 #include <pebble-activity-indicator-layer/activity-indicator-layer.h>
 #include "NotificationCenter.h"
+#include "NotificationsWindow/status_bar.h"
 #include "NotificationsWindow/NotificationsWindow.h"
 
 static Window* window;
@@ -25,8 +26,6 @@ static ActivityIndicatorLayer *loadingIndicator;
 #endif
 
 static MenuLayer* menuLayer;
-
-static StatusBarLayer* statusBar;
 
 static bool firstAppear = true;
 static bool menuLoaded = false;
@@ -345,8 +344,11 @@ static void window_appears(Window* window)
 
     menu_layer_set_click_config_onto_window(menuLayer, window);
     layer_add_child(topLayer, menu_layer_get_layer(menuLayer));
-	statusBar = status_bar_layer_create();
-	layer_add_child(topLayer, status_bar_layer_get_layer(statusBar));
+
+    sb_load(true);
+    layer_set_update_proc(statusbar, sb_paint);
+
+	layer_add_child(topLayer, statusbar);
 
 	historyCleared = false;
 
@@ -369,7 +371,8 @@ static void window_disappears(Window* me)
 	text_layer_destroy(quitText);
 
     menu_layer_destroy(menuLayer);
-	status_bar_layer_destroy(statusBar);
+	
+    sb_unload(true);
 
     #ifndef PBL_LOW_MEMORY
         activity_indicator_layer_destroy(loadingIndicator);

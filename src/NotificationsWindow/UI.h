@@ -5,6 +5,8 @@
 #ifndef NOTIFICATIONCENTER_UI_H
 #define NOTIFICATIONCENTER_UI_H
 
+#include "status_bar.h"
+
 void nw_ui_refresh_notification(void);
 void nw_ui_refresh_picked_indicator(void);
 

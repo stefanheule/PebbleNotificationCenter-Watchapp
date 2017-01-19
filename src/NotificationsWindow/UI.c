@@ -33,11 +33,8 @@ static BitmapLayer* notificationBitmapLayer;
 static Layer* bitmapShadingLayer;
 #endif
 
-static Layer* statusbar;
-static TextLayer* statusClock;
 static Layer* circlesLayer;
 static GBitmap* busyIndicator;
-static char clockText[9];
 
 static ScrollLayer* scroll;
 static Layer* textDisplayLayer;
@@ -268,15 +265,7 @@ static void on_scroll_changed(ScrollLayer* scrollLayer, void* context)
 
 static void statusbarback_paint(Layer* layer, GContext* ctx)
 {
-    GColor backgroundColor = GColorBlack;
-#ifdef PBL_COLOR
-    // Notification* curNotification = nw_get_displayed_notification();
-    // if (curNotification != NULL)
-    //     backgroundColor = curNotification->notificationColor;
-#endif
-
-    graphics_context_set_fill_color(ctx, backgroundColor);
-    graphics_fill_rect(ctx, layer_get_frame(layer), 0, GCornerNone);
+    sb_paint(layer, ctx);
 
     if (busy)
     {
@@ -343,58 +332,27 @@ static void circles_paint(Layer* layer, GContext* ctx)
 
 void nw_ui_update_statusbar_clock()
 {
-    time_t now = time(NULL);
-    struct tm* lTime = localtime(&now);
-
-    char* formatString;
-    if (clock_is_24h_style())
-        formatString = "%H:%M";
-    else
-        formatString = "%I:%M %p";
-
-    char tmpClockText[9];
-    strftime(tmpClockText, 9, formatString, lTime);
-
-    // remove leading zero
-    if (tmpClockText[0] == '0') {
-        for (int i = 0; i < 6; i++) {
-            tmpClockText[i] = tmpClockText[i+1];
-        }
-    }
-
-    //Only update screen when actual clock changes
-    if (strcmp(tmpClockText, clockText) != 0)
-    {
-        strcpy(clockText, tmpClockText);
-        text_layer_set_text(statusClock, clockText);
-    }
+    sb_update_clock();
 }
 
 void nw_ui_load(Window* window)
 {
     busyIndicator = gbitmap_create_with_resource(RESOURCE_ID_INDICATOR_BUSY);
 
-#define BIG_STB_H 32
-    statusbarSize = PBL_IF_ROUND_ELSE(32, BIG_STB_H);
+    statusbarSize = PBL_IF_ROUND_ELSE(32, STATUSBAR_Y_OFFSET);
 
     Layer* topLayer = window_get_root_layer(window);
     GRect windowBounds = layer_get_frame(topLayer);
     windowHeight = windowBounds.size.h - statusbarSize;
 
-    statusbar = layer_create(GRect(0, 0, windowBounds.size.w, statusbarSize));
+    sb_load(false);
     layer_set_update_proc(statusbar, statusbarback_paint);
+
     layer_add_child(topLayer, statusbar);
 
     circlesLayer = layer_create(PBL_IF_ROUND_ELSE(GRect(40, 16, windowBounds.size.w, 16),GRect(0, 0, 144 - 65, 16)));
     layer_set_update_proc(circlesLayer, circles_paint);
     layer_add_child(statusbar, circlesLayer);
-
-    statusClock = text_layer_create(PBL_IF_ROUND_ELSE(GRect(0, 0, windowBounds.size.w, BIG_STB_H), GRect(144 - 144, -12, 144, 100)));
-    text_layer_set_background_color(statusClock, GColorClear);
-    text_layer_set_text_color(statusClock, GColorWhite);
-    text_layer_set_font(statusClock, fonts_get_system_font(FONT_KEY_BITHAM_42_BOLD));
-    text_layer_set_text_alignment(statusClock, PBL_IF_ROUND_ELSE(GTextAlignmentCenter, GTextAlignmentRight));
-    layer_add_child(statusbar, (Layer*) statusClock);
 
     textBackgroundLayer = layer_create(GRect(0, statusbarSize, windowBounds.size.w, windowBounds.size.h - statusbarSize));
     layer_set_update_proc(textBackgroundLayer, background_layer_paint);
@@ -440,12 +398,10 @@ void nw_ui_load(Window* window)
 
 void nw_ui_unload()
 {
-    layer_destroy(statusbar);
-    statusbar = NULL;
+    sb_unload(false);
     layer_destroy(circlesLayer);
     layer_destroy(textDisplayLayer);
     layer_destroy(textBackgroundLayer);
-    text_layer_destroy(statusClock);
     scroll_layer_destroy(scroll);
     gbitmap_destroy(busyIndicator);
 

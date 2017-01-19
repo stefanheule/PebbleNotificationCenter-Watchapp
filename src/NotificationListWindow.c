@@ -2,6 +2,7 @@
 #include <pebble_fonts.h>
 #include "NotificationCenter.h"
 #include "CircularBuffer.h"
+#include "NotificationsWindow/status_bar.h"
 
 #define LIST_STORAGE_SIZE 6
 
@@ -28,8 +29,6 @@ typedef struct
 static CircularBuffer* notifications;
 
 static MenuLayer* menuLayer;
-
-static StatusBarLayer* statusBar;
 
 static GBitmap* normalNotification;
 static GBitmap* ongoingNotification;
@@ -282,8 +281,10 @@ static void window_appear(Window* me) {
 
 	layer_add_child(topLayer, (Layer*) menuLayer);
 
-	statusBar = status_bar_layer_create();
-	layer_add_child(topLayer, status_bar_layer_get_layer(statusBar));
+	sb_load(true);
+    layer_set_update_proc(statusbar, sb_paint);
+
+	layer_add_child(topLayer, statusbar);
 
 	pickedEntry = -1;
 
@@ -299,7 +300,7 @@ static void window_disappear(Window* me) {
 	gbitmap_destroy(ongoingNotification);
 
 	menu_layer_destroy(menuLayer);
-	status_bar_layer_destroy(statusBar);
+	sb_unload(true);
 
 	freeData();
 
