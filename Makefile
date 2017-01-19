@@ -13,6 +13,12 @@ build:
 phone:
 	pebble install --phone $(PHONE_IP)
 
+log:
+	pebble logs --emulator $(P)
+
+phone_log:
+	pebble logs --phone $(PHONE_IP)
+
 
 
 .PHONY: build phone install_emulator

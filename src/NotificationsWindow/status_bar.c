@@ -36,6 +36,7 @@ void sb_load(bool update) {
 void sb_unload(bool update) {
     layer_destroy(statusbar);
     text_layer_destroy(statusClock);
+    clockText[0] = 0;
 
     if (update) {
         tick_timer_service_unsubscribe();
