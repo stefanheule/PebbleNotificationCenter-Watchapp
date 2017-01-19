@@ -265,7 +265,14 @@ static void on_scroll_changed(ScrollLayer* scrollLayer, void* context)
 
 static void statusbarback_paint(Layer* layer, GContext* ctx)
 {
-    sb_paint(layer, ctx);
+    GColor backgroundColor = GColorBlack;
+#ifdef PBL_COLOR
+    Notification* curNotification = nw_get_displayed_notification();
+    if (curNotification != NULL)
+        backgroundColor = curNotification->notificationColor;
+#endif
+    graphics_context_set_fill_color(ctx, backgroundColor);
+    graphics_fill_rect(ctx, layer_get_frame(layer), 0, GCornerNone);
 
     if (busy)
     {
@@ -281,12 +288,12 @@ static void circles_paint(Layer* layer, GContext* ctx)
     GColor backgroundColor = GColorBlack;
 
 #ifdef PBL_COLOR
-    // Notification* curNotification = nw_get_displayed_notification();
-    // if (curNotification != NULL)
-    // {
-    //     backgroundColor = curNotification->notificationColor;
-    //     circlesColor = getTextColor(backgroundColor);
-    // }
+    Notification* curNotification = nw_get_displayed_notification();
+    if (curNotification != NULL)
+    {
+        backgroundColor = curNotification->notificationColor;
+        circlesColor = getTextColor(backgroundColor);
+    }
 #endif
 
 

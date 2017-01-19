@@ -8,12 +8,6 @@ char clockText[9];
 void sb_paint(Layer* layer, GContext* ctx)
 {
     GColor backgroundColor = GColorBlack;
-#ifdef PBL_COLOR
-    // Notification* curNotification = nw_get_displayed_notification();
-    // if (curNotification != NULL)
-    //     backgroundColor = curNotification->notificationColor;
-#endif
-
     graphics_context_set_fill_color(ctx, backgroundColor);
     graphics_fill_rect(ctx, layer_get_frame(layer), 0, GCornerNone);
 }
