@@ -2,22 +2,24 @@
 P=basalt
 PHONE_IP="192.168.1.6"
 
+PEBBLE="/h/software/pebble-sdk/pebble-sdk-4.5-linux64/bin/pebble"
+
 all: build install_emulator
 
 install_emulator:
-	pebble install --emulator $(P)
+	$(PEBBLE) install --emulator $(P)
 
 build:
-	pebble build
+	$(PEBBLE) build
 
 phone:
-	pebble install --phone $(PHONE_IP)
+	$(PEBBLE) install --phone $(PHONE_IP)
 
 log:
-	pebble logs --emulator $(P)
+	$(PEBBLE) logs --emulator $(P)
 
 phone_log:
-	pebble logs --phone $(PHONE_IP)
+	$(PEBBLE) logs --phone $(PHONE_IP)
 
 
 
